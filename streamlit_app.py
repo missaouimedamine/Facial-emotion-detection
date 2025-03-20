@@ -1,38 +1,20 @@
 import streamlit as st
 import cv2
 import numpy as np
+from PIL import Image
 
-# Streamlit title
-st.title("Live Camera Feed with Streamlit")
+st.title("Upload Image for Processing")
 
-# Start video capture
-cap = cv2.VideoCapture(0)
+uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png", "jpeg"])
 
-# Check if the webcam is opened
-if not cap.isOpened():
-    st.error("Error: Could not access the webcam.")
-else:
-    st.write("Webcam is active. Click 'Capture' to take a picture.")
+if uploaded_file is not None:
+    # Convert uploaded file to OpenCV format
+    image = Image.open(uploaded_file)
+    image = np.array(image)
 
-# Display webcam feed
-frame_placeholder = st.empty()
+    # Convert to grayscale
+    gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
 
-while True:
-    ret, frame = cap.read()
-    if not ret:
-        st.error("Failed to capture image.")
-        break
-
-    # Convert frame to RGB for Streamlit
-    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    
-    # Display the frame
-    frame_placeholder.image(frame, channels="RGB", use_column_width=True)
-
-    # Stop the loop when user closes the app
-    if st.button("Stop Camera"):
-        break
-
-# Release the camera
-cap.release()
-st.write("Camera feed stopped.")
+    # Display original and processed images
+    st.image(image, caption="Original Image", use_column_width=True)
+    st.image(gray, caption="Grayscale Image", use_column_width=True)
