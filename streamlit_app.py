@@ -1,20 +1,14 @@
 import streamlit as st
 import cv2
 import numpy as np
-from PIL import Image
+from streamlit_webrtc import webrtc_streamer
 
-st.title("Upload Image for Processing")
+def main():
+    st.title("Live Camera Stream")
+    st.write("This app opens your camera and displays the video feed.")
+    
+    # Start the webcam stream
+    webrtc_streamer(key="camera")
 
-uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png", "jpeg"])
-
-if uploaded_file is not None:
-    # Convert uploaded file to OpenCV format
-    image = Image.open(uploaded_file)
-    image = np.array(image)
-
-    # Convert to grayscale
-    gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
-
-    # Display original and processed images
-    st.image(image, caption="Original Image", use_column_width=True)
-    st.image(gray, caption="Grayscale Image", use_column_width=True)
+if __name__ == "__main__":
+    main()
